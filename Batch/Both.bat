@@ -219,6 +219,18 @@ start /w "" "%file_setup%" --uninstall --msedgewebview --system-level --force-un
 echo [uninstall().webview.done] %bat_dbg%
 
 
+echo - Removing WebView (evergreen)
+echo [uninstall().webview.evergreen.init] %bat_dbg%
+if not exist "%LOCALAPPDATA%\Microsoft\EdgeWebView\Application\" goto uninstall.webview.evergreen.done
+
+echo [uninstall().webview.evergreen] %bat_dbg%
+for /f "delims=" %%d in ('dir /b /ad "%LOCALAPPDATA%\Microsoft\EdgeWebView\Application" 2^>NUL') do (
+	if exist "%LOCALAPPDATA%\Microsoft\EdgeWebView\Application\%%~d\Installer\setup.exe" (
+		start /w "" "%LOCALAPPDATA%\Microsoft\EdgeWebView\Application\%%~d\Installer\setup.exe" --uninstall --msedgewebview --force-uninstall %stp_dbg_arg% %bat_log%
+		%stp_dbg_get%
+	)
+)
+
 echo - Removing AppX
 echo [uninstall().appx.init] %bat_dbg%
 set "LOC_APPREPO_DB=%AllUsersProfile%\Microsoft\Windows\AppRepository\StateRepository-Machine.srd"
@@ -863,3 +875,4 @@ main;^
 :_appx_unlock_and_delete.end
 echo [appx_unlock_and_delete().end] %cll_dbg%
 exit /b 0
+
